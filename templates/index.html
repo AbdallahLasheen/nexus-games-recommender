@@ -1,0 +1,782 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>NEXUS Games | AI Recommender</title>
+    <meta name="description" content="Intelligent Video Game Recommendation System - AIE425">
+    <link rel="stylesheet" href="/static/css/style.css?v=25">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+    <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.0/dist/chart.umd.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.10.1/html2pdf.bundle.min.js"></script>
+</head>
+
+<body>
+
+    <!-- ═══════════════ LOGIN PAGE ═══════════════ -->
+    <div class="login-page" id="loginPage">
+        <div class="login-bg"></div>
+
+        <!-- ── LOGIN CARD ── -->
+        <div class="login-card" id="loginCard">
+            <div class="login-logo-icon">
+                <svg viewBox="0 0 64 64" fill="none" xmlns="http://www.w3.org/2000/svg">
+                    <path d="M32 4L8 20v24l24 16 24-16V20L32 4z" stroke="url(#g1)" stroke-width="2"
+                        fill="rgba(124,92,252,0.08)" />
+                    <path d="M32 12l-16 10v20l16 10 16-10V22L32 12z" stroke="url(#g1)" stroke-width="1.5"
+                        fill="rgba(124,92,252,0.05)" />
+                    <path d="M24 30l8-8 8 8-8 8-8-8z" fill="url(#g1)" />
+                    <path d="M32 22v-6M32 42v6M22 32h-6M42 32h6" stroke="url(#g1)" stroke-width="1.5" />
+                    <defs>
+                        <linearGradient id="g1" x1="0" y1="0" x2="64" y2="64">
+                            <stop stop-color="#7c5cfc" />
+                            <stop offset="1" stop-color="#00d4ff" />
+                        </linearGradient>
+                    </defs>
+                </svg>
+            </div>
+            <div class="login-logo">NEXUS</div>
+            <div class="login-subtitle">Enter The Game</div>
+            <div class="login-welcome">
+                <span class="login-welcome-arrow">&#10022;&#10141;</span>
+                WELCOME <span>BACK</span>
+                <span class="login-welcome-arrow">&#10140;&#10022;</span>
+            </div>
+            <div class="login-desc">Login with your existing account</div>
+
+            <div class="login-input-wrap">
+                <i class="fa-solid fa-user input-icon-left"></i>
+                <input class="login-input" type="text" placeholder="Username" id="loginUser"
+                    onkeydown="if(event.key==='Enter') doLogin()">
+            </div>
+            <div class="login-input-wrap">
+                <i class="fa-solid fa-lock input-icon-left"></i>
+                <input class="login-input has-right" type="password" placeholder="Password" id="loginPass"
+                    onkeydown="if(event.key==='Enter') doLogin()">
+                <i class="fa-solid fa-eye input-icon-right" onclick="togglePassword('loginPass', this)"></i>
+            </div>
+
+            <div id="loginError"
+                style="display:none; color:#f64f9e; font-size:0.78rem; margin:-0.3rem 0 0.6rem; padding:0.5rem 0.8rem; background:rgba(246,79,158,0.1); border-radius:8px; border:1px solid rgba(246,79,158,0.3);">
+                <i class="fa-solid fa-circle-exclamation"></i> <span id="loginErrorMsg"></span>
+            </div>
+
+            <div class="login-row">
+                <label><input type="checkbox" checked> Remember me</label>
+                <a href="#">Forgot Password?</a>
+            </div>
+            <button class="login-btn" id="loginBtn" onclick="doLogin()">
+                LOGIN
+                <span class="btn-arrow"><i class="fa-solid fa-arrow-right"></i></span>
+            </button>
+            <div class="login-signup" style="margin-top: 1.5rem;">Don't have an account? <a href="#"
+                    onclick="showSignUp(); return false;">Sign Up</a></div>
+        </div>
+
+        <!-- ── SIGN UP CARD ── -->
+        <div class="login-card" id="signupCard" style="display:none;">
+            <div class="login-logo-icon">
+                <svg viewBox="0 0 64 64" fill="none" xmlns="http://www.w3.org/2000/svg">
+                    <path d="M32 4L8 20v24l24 16 24-16V20L32 4z" stroke="url(#g1)" stroke-width="2"
+                        fill="rgba(124,92,252,0.08)" />
+                    <path d="M24 30l8-8 8 8-8 8-8-8z" fill="url(#g1)" />
+                    <path d="M32 22v-6M32 42v6M22 32h-6M42 32h6" stroke="url(#g1)" stroke-width="1.5" />
+                </svg>
+            </div>
+            <div class="login-logo">NEXUS</div>
+            <div class="login-subtitle">Join The Game</div>
+            <div class="login-welcome">
+                <span class="login-welcome-arrow">&#10022;&#10141;</span>
+                CREATE <span>ACCOUNT</span>
+                <span class="login-welcome-arrow">&#10140;&#10022;</span>
+            </div>
+            <div class="login-desc">Get AI-powered recommendations right away!</div>
+
+            <div class="login-input-wrap">
+                <i class="fa-solid fa-user input-icon-left"></i>
+                <input class="login-input" type="text" placeholder="Choose a Username" id="signupUser"
+                    onkeydown="if(event.key==='Enter') doSignup()">
+            </div>
+            <div class="login-input-wrap">
+                <i class="fa-solid fa-lock input-icon-left"></i>
+                <input class="login-input has-right" type="password" placeholder="Password" id="signupPass"
+                    onkeydown="if(event.key==='Enter') doSignup()">
+                <i class="fa-solid fa-eye input-icon-right" onclick="togglePassword('signupPass', this)"></i>
+            </div>
+
+            <div id="signupError"
+                style="display:none; color:#f64f9e; font-size:0.78rem; margin:-0.3rem 0 0.6rem; padding:0.5rem 0.8rem; background:rgba(246,79,158,0.1); border-radius:8px; border:1px solid rgba(246,79,158,0.3);">
+                <i class="fa-solid fa-circle-exclamation"></i> <span id="signupErrorMsg"></span>
+            </div>
+
+
+            <button class="login-btn" id="signupBtn" onclick="doSignup()"
+                style="background:linear-gradient(135deg,#00d4ff,#7c5cfc);">
+                CREATE ACCOUNT
+                <span class="btn-arrow"><i class="fa-solid fa-arrow-right"></i></span>
+            </button>
+            <div class="login-signup" style="margin-top: 1.5rem;">Already have an account? <a href="#"
+                    onclick="showLogin(); return false;">Login</a></div>
+        </div>
+        <div class="login-footer">
+            <div class="login-footer-items">
+                <div class="login-footer-item"><span class="footer-icon"><i class="fa-solid fa-trophy"></i></span>
+                    <div><strong>COMPETE</strong>Join tournaments</div>
+                </div>
+                <div class="login-footer-item"><span class="footer-icon"><i class="fa-solid fa-users"></i></span>
+                    <div><strong>CONNECT</strong>Build your squad</div>
+                </div>
+                <div class="login-footer-item"><span class="footer-icon"><i class="fa-solid fa-award"></i></span>
+                    <div><strong>ACHIEVE</strong>Unlock rewards</div>
+                </div>
+                <div class="login-footer-item"><span class="footer-icon"><i
+                            class="fa-solid fa-bolt-lightning"></i></span>
+                    <div><strong>DOMINATE</strong>Rise to the top</div>
+                </div>
+                <div class="login-footer-item"><span class="footer-icon"><i class="fa-solid fa-microchip"></i></span>
+                    <div><strong>AI ENGINE</strong>Smart picks</div>
+                </div>
+            </div>
+
+        </div>
+    </div>
+
+    <!-- ═══════════════ DASHBOARD ═══════════════ -->
+    <div class="dashboard" id="dashboard">
+
+        <!-- Sidebar -->
+        <aside class="sidebar">
+            <div class="sidebar-logo">
+                <i class="fa-solid fa-gamepad"></i>
+                <div><span>NEXUS</span><small>GAMES</small></div>
+            </div>
+            <nav class="sidebar-nav">
+                <div class="nav-item active" data-page="analytics"><i class="fa-solid fa-chart-bar"></i> Analytics</div>
+                <div class="nav-item" data-page="store"><i class="fa-solid fa-store"></i> Store</div>
+                <div class="nav-item" data-page="library"><i class="fa-solid fa-book"></i> Library</div>
+                <div class="nav-item" data-page="wishlist"><i class="fa-solid fa-heart"></i> Wishlist</div>
+                <div class="nav-item" data-page="recommendations"><i class="fa-solid fa-wand-magic-sparkles"></i>
+                    Manual Recommendations</div>
+                <div class="nav-item" data-page="auto-smart"><i class="fa-solid fa-brain"></i> Auto Smart Mode</div>
+                <div class="nav-item" data-page="insights"><i class="fa-solid fa-microscope"></i> Model Insights</div>
+                <div class="nav-item" data-page="about"><i class="fa-solid fa-circle-info"></i> About</div>
+            </nav>
+            <div class="sidebar-user">
+                <div class="sidebar-user-info" style="cursor: pointer;" onclick="openProfile()">
+                    <img src="/static/images/ali_maaloul_looking_direct.png" class="sidebar-avatar"
+                        style="object-fit: cover;" alt="Avatar">
+                    <div>
+                        <div class="sidebar-username">SpecterX <i class="fa-solid fa-circle-check"
+                                style="color:var(--accent-green);font-size:.65rem"></i></div>
+                        <div class="sidebar-level">Level 42</div>
+                    </div>
+                </div>
+                <div class="xp-bar">
+                    <div class="xp-fill"></div>
+                </div>
+                <div class="xp-text">7,350 / 10,000 XP</div>
+            </div>
+            <div class="sidebar-premium">
+                <h4><i class="fa-solid fa-gem"></i> NEXUS PREMIUM</h4>
+                <p>Unlock exclusive deals and early game access.</p>
+                <button>Upgrade Now</button>
+            </div>
+        </aside>
+
+        <!-- Main -->
+        <div class="main-content">
+            <!-- Top Header -->
+            <header class="top-header">
+                <div class="search-bar">
+                    <i class="fa-solid fa-magnifying-glass"></i>
+                    <input type="text" id="storeSearch" oninput="searchStore()" placeholder="Search games, genres, tags...">
+                </div>
+                <div class="header-actions">
+                    <div class="header-icon" id="notifBtn" onclick="toggleDropdown('notifDropdown')" title="Notifications"><i class="fa-solid fa-bell"></i><span class="badge" id="notifBadge">3</span></div>
+                    <div class="header-icon" id="cartBtn" onclick="toggleDropdown('cartDropdown')" title="Cart"><i class="fa-solid fa-cart-shopping"></i><span class="badge" id="cartBadge">0</span></div>
+                    <div class="header-icon" onclick="logout()" title="Logout"><i class="fa-solid fa-right-from-bracket"></i></div>
+                    <button class="premium-btn" onclick="showPremiumModal()"><i class="fa-solid fa-sparkles"></i> Get Nexus Premium</button>
+                </div>
+
+                <!-- Notifications Dropdown -->
+                <div class="header-dropdown" id="notifDropdown">
+                    <div class="dropdown-header"><h4><i class="fa-solid fa-bell"></i> Notifications</h4><span class="dropdown-clear" onclick="clearNotifications()">Clear All</span></div>
+                    <div class="dropdown-body" id="notifList">
+                        <div class="dropdown-item unread"><i class="fa-solid fa-wand-magic-sparkles noti-icon purple"></i><div><strong>New recommendations ready!</strong><p>Your personalized picks have been updated based on recent activity.</p><span class="noti-time">2 min ago</span></div></div>
+                        <div class="dropdown-item unread"><i class="fa-solid fa-tag noti-icon green"></i><div><strong>Weekend Sale is live!</strong><p>Up to 70% off on RPG and Action titles.</p><span class="noti-time">1 hour ago</span></div></div>
+                        <div class="dropdown-item unread"><i class="fa-solid fa-trophy noti-icon orange"></i><div><strong>Achievement Unlocked</strong><p>You've rated 10+ games — Explorer badge earned!</p><span class="noti-time">3 hours ago</span></div></div>
+                    </div>
+                </div>
+
+                <!-- Cart Dropdown -->
+                <div class="header-dropdown" id="cartDropdown">
+                    <div class="dropdown-header"><h4><i class="fa-solid fa-cart-shopping"></i> Your Cart</h4><span class="dropdown-clear" onclick="clearCart()">Clear</span></div>
+                    <div class="dropdown-body" id="cartList">
+                        <div class="dropdown-empty"><i class="fa-solid fa-cart-shopping" style="font-size:2rem;opacity:.2;margin-bottom:.5rem"></i><p>Your cart is empty</p></div>
+                    </div>
+                    <div class="dropdown-footer" id="cartFooter" style="display:none">
+                        <div class="cart-total">Total: <strong id="cartTotal">$0.00</strong></div>
+                        <button class="cart-checkout-btn" onclick="checkoutCart()"><i class="fa-solid fa-credit-card"></i> Checkout</button>
+                    </div>
+                </div>
+            </header>
+
+            <!-- Content -->
+            <div class="content-area">
+
+                <!-- ═══ RECOMMENDATIONS PAGE ═══ -->
+                <div class="page-section" id="page-recommendations">
+                    <div style="display:flex;justify-content:space-between;align-items:flex-start">
+                        <div>
+                            <h1 class="page-title">Manual Recommendations</h1>
+                            <p class="page-subtitle">Personalized game suggestions powered by advanced AI</p>
+                        </div>
+                        <div class="ai-badge">
+                            <i class="fa-solid fa-robot" style="font-size:1.2rem;color:var(--accent-purple)"></i>
+                            <div><span>AI Recommendation Level</span><br><strong>Advanced</strong></div>
+                        </div>
+                    </div>
+                    <div class="rec-layout">
+                        <div class="rec-sidebar-panel">
+                            <!-- User Select -->
+                            <div class="user-select-wrap">
+                                <label><i class="fa-solid fa-user"></i> Select User</label>
+                                <select class="user-select" id="userSelect" onchange="onUserChange()"></select>
+                                <div class="n-recs-wrap">
+                                    <label style="font-size:.7rem;color:var(--text-muted)">Recommendations: <span
+                                            id="nRecsVal">10</span></label>
+                                    <input type="range" min="5" max="20" value="10" id="nRecsSlider"
+                                        oninput="document.getElementById('nRecsVal').textContent=this.value">
+                                </div>
+                            </div>
+                            <!-- Mode Panel -->
+                            <div class="mode-panel">
+                                <h3>Recommendation Mode</h3>
+                                <p>Choose how you want recommendations to be calculated.</p>
+                                <div class="mode-option active" data-approach="collaborative"
+                                    onclick="selectMode(this)">
+                                    <div class="mode-option-icon"><i class="fa-solid fa-users"></i></div>
+                                    <div class="mode-option-text">
+                                        <h4>Collaborative Filtering</h4>
+                                        <p>Based on your behavior and similar players.</p>
+                                    </div>
+                                    <i class="fa-solid fa-circle-check mode-check"></i>
+                                </div>
+                                <div class="mode-option" data-approach="content" onclick="selectMode(this)">
+                                    <div class="mode-option-icon"><i class="fa-solid fa-file-lines"></i></div>
+                                    <div class="mode-option-text">
+                                        <h4>Content-Based</h4>
+                                        <p>Based on game features and your preferences.</p>
+                                    </div>
+                                    <i class="fa-solid fa-circle-check mode-check"></i>
+                                </div>
+                                <div class="mode-option" data-approach="knowledge" onclick="selectMode(this)">
+                                    <div class="mode-option-icon"><i class="fa-solid fa-lightbulb"></i></div>
+                                    <div class="mode-option-text">
+                                        <h4>Knowledge-Based</h4>
+                                        <p>AI-driven suggestions using game knowledge.</p>
+                                    </div>
+                                    <i class="fa-solid fa-circle-check mode-check"></i>
+                                </div>
+                                <div class="mode-option" data-approach="hybrid" onclick="selectMode(this)">
+                                    <div class="mode-option-icon"><i class="fa-solid fa-shuffle"></i></div>
+                                    <div class="mode-option-text">
+                                        <h4>Hybrid</h4>
+                                        <p>Combines all approaches for best results.</p>
+                                    </div>
+                                    <i class="fa-solid fa-circle-check mode-check"></i>
+                                </div>
+                            </div>
+                            <!-- CF Methods -->
+                            <div class="cf-methods" id="cfMethodsPanel">
+                                <h4>CF Method</h4>
+                                <button class="cf-method-btn active" data-method="ubcf"
+                                    onclick="selectCFMethod(this)">User-Based CF (Pearson)</button>
+                                <button class="cf-method-btn" data-method="ibcf"
+                                    onclick="selectCFMethod(this)">Item-Based CF (Adj. Cosine)</button>
+                                <button class="cf-method-btn" data-method="mf" onclick="selectCFMethod(this)">Matrix
+                                    Factorization (GD)</button>
+                                <button class="cf-method-btn" data-method="ncf" onclick="selectCFMethod(this)">Neural CF
+                                    (NCF)</button>
+                            </div>
+                            <!-- Content Methods -->
+                            <div class="cf-methods" id="contentMethodsPanel" style="display:none">
+                                <h4>Content Method</h4>
+                                <button class="cf-method-btn active" data-method="tfidf"
+                                    onclick="selectContentMethod(this)">TF-IDF VSM</button>
+                                <button class="cf-method-btn" data-method="cnn" onclick="selectContentMethod(this)">CNN
+                                    Semantic</button>
+                            </div>
+                            <!-- KB Constraints -->
+                            <div class="kb-constraints" id="kbConstraints" style="display:none">
+                                <h4><i class="fa-solid fa-sliders"></i> Constraints</h4>
+                                <div class="constraint-group">
+                                    <label>Max Price ($) <span class="constraint-val"
+                                            id="priceVal">$60.00</span></label>
+                                    <input type="range" min="0" max="70" step="0.5" value="60" id="maxPrice"
+                                        oninput="document.getElementById('priceVal').textContent='$'+parseFloat(this.value).toFixed(2)">
+                                </div>
+                                <div class="constraint-group">
+                                    <label>Genre / Category</label>
+                                    <select id="genreKw" class="constraint-select">
+                                        <option value="">All Genres</option>
+                                        <option value="action">Action</option>
+                                        <option value="adventure">Adventure</option>
+                                        <option value="rpg">RPG / Role-Playing</option>
+                                        <option value="strategy">Strategy</option>
+                                        <option value="sports">Sports</option>
+                                        <option value="simulation">Simulation</option>
+                                        <option value="indie">Indie</option>
+                                        <option value="casual">Casual</option>
+                                        <option value="racing">Racing</option>
+                                        <option value="fighting">Fighting</option>
+                                        <option value="mmo">Massively Multiplayer</option>
+                                    </select>
+                                </div>
+                                <div class="constraint-group">
+                                    <label>Min Rating <span class="constraint-val" id="minRatVal">3.0</span></label>
+                                    <input type="range" min="0" max="5" step="0.5" value="3" id="minRating"
+                                        oninput="document.getElementById('minRatVal').textContent=parseFloat(this.value).toFixed(1)">
+                                </div>
+                                <div class="constraint-group">
+                                    <label>Min Reviews</label>
+                                    <input type="number" id="minReviews" value="5" min="0" step="5">
+                                </div>
+                            </div>
+                            <!-- Why Panel -->
+                            <div class="why-panel">
+                                <h4><i class="fa-solid fa-circle-question"></i> Why these games?</h4>
+                                <p id="whyText">These recommendations are based on your play history, preferences, and
+                                    similar players' choices.</p>
+                            </div>
+                        </div>
+
+                        <!-- Main Recommendations -->
+                        <div class="rec-main" id="recResults">
+                            <div class="loading">
+                                <div class="spinner"></div>Loading recommendations...
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- ═══ AUTO SMART MODE PAGE ═══ -->
+                <div class="page-section" id="page-auto-smart">
+                    <div style="display:flex;justify-content:space-between;align-items:flex-start">
+                        <div>
+                            <h1 class="page-title">Intelligent Auto Selection</h1>
+                            <p class="page-subtitle">The system automatically selects the optimal algorithm based on
+                                your profile.</p>
+                        </div>
+                        <div class="ai-badge" style="background:var(--accent-orange)">
+                            <i class="fa-solid fa-bolt" style="font-size:1.2rem;color:#fff"></i>
+                            <div><span style="color:#fff">System Mode</span><br><strong
+                                    style="color:#fff">Auto-Hybrid</strong></div>
+                        </div>
+                    </div>
+                    <div class="rec-layout">
+                        <div class="rec-sidebar-panel">
+                            <!-- User Select -->
+                            <div class="user-select-wrap">
+                                <label><i class="fa-solid fa-user"></i> Select User</label>
+                                <select class="user-select" id="autoUserSelect" onchange="runAutoSmartMode()"></select>
+                                <div class="n-recs-wrap">
+                                    <label style="font-size:.7rem;color:var(--text-muted)">Recommendations: <span
+                                            id="autoNRecsVal">10</span></label>
+                                    <input type="range" min="5" max="20" value="10" id="autoNRecsSlider"
+                                        oninput="document.getElementById('autoNRecsVal').textContent=this.value; runAutoSmartMode()">
+                                </div>
+                            </div>
+
+                            <!-- Intelligent Analysis Panel -->
+                            <div class="mode-panel"
+                                style="background: rgba(255,107,53,0.1); border-color: var(--accent-orange);">
+                                <h3 style="color: var(--accent-orange)"><i class="fa-solid fa-microchip"></i> System
+                                    Analysis</h3>
+                                <div id="autoAnalysisContent"
+                                    style="margin-top: 1rem; font-size: 0.9rem; color: var(--text-secondary); line-height: 1.5;">
+                                    Please select a user to run the intelligent auto-selection.
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Main Recommendations -->
+                        <div class="rec-main" id="autoRecGrid">
+                            <div class="loading">
+                                <div class="spinner"></div>Waiting for selection...
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- ═══ STORE PAGE ═══ -->
+                <div class="page-section" id="page-store">
+                    <h1 class="page-title">🕹️ Game Store</h1>
+                    <p class="page-subtitle">Discover and purchase new games for your collection</p>
+                    <div class="game-grid" id="storeGrid"></div>
+                </div>
+
+                <!-- ═══ LIBRARY PAGE ═══ -->
+                <div class="page-section" id="page-library">
+                    <h1 class="page-title">📚 My Library</h1>
+                    <p class="page-subtitle">Games you currently own</p>
+                    <div class="game-grid" id="libraryGrid"></div>
+                </div>
+
+                <!-- ═══ WISHLIST PAGE ═══ -->
+                <div class="page-section" id="page-wishlist">
+                    <h1 class="page-title">💖 My Wishlist</h1>
+                    <p class="page-subtitle">Games you are interested in buying</p>
+                    <div class="game-grid" id="wishlistGrid"></div>
+                </div>
+
+                <!-- ═══ ANALYTICS PAGE — Algorithm Comparison Dashboard ═══ -->
+                <div class="page-section active" id="page-analytics">
+                    <!-- Dashboard Header -->
+                    <div class="dash-header" style="position:relative">
+                        <div>
+                            <h1 class="dash-title">GAMING RECOMMENDATION SYSTEM</h1>
+                            <p class="dash-subtitle">ALGORITHM COMPARISON DASHBOARD</p>
+                        </div>
+                        <div class="dash-header-actions">
+                            <div class="dash-filter" onclick="toggleDropdown('dateDropdown')" style="cursor:pointer"><i class="fa-regular fa-calendar"></i> <span id="dashDateRange">May 18 - May 24, 2025</span> <i class="fa-solid fa-chevron-down" style="font-size:.6rem;opacity:.5"></i></div>
+                            <div class="dash-filter" onclick="toggleDropdown('platformDropdown')" style="cursor:pointer"><i class="fa-solid fa-globe"></i> <span id="platformLabel">All Platforms</span> <i class="fa-solid fa-chevron-down" style="font-size:.6rem;opacity:.5"></i></div>
+                            <button class="dash-export-btn" id="exportReportBtn" onclick="exportReport()"><i class="fa-solid fa-file-export"></i> Export Report</button>
+                        </div>
+
+                        <!-- Date Range Dropdown -->
+                        <div class="header-dropdown filter-dropdown" id="dateDropdown">
+                            <div class="dropdown-header"><h4><i class="fa-regular fa-calendar"></i> Date Range</h4></div>
+                            <div class="dropdown-body">
+                                <div class="dropdown-item" onclick="selectDateRange('Today')">Today</div>
+                                <div class="dropdown-item" onclick="selectDateRange('Last 7 Days')">Last 7 Days</div>
+                                <div class="dropdown-item active-filter" onclick="selectDateRange('May 18 - May 24, 2025')">May 18 - May 24, 2025</div>
+                                <div class="dropdown-item" onclick="selectDateRange('Last 30 Days')">Last 30 Days</div>
+                                <div class="dropdown-item" onclick="selectDateRange('Last 90 Days')">Last 90 Days</div>
+                                <div class="dropdown-item" onclick="selectDateRange('All Time')">All Time</div>
+                            </div>
+                        </div>
+
+                        <!-- Platform Dropdown -->
+                        <div class="header-dropdown filter-dropdown" id="platformDropdown">
+                            <div class="dropdown-header"><h4><i class="fa-solid fa-globe"></i> Platform</h4></div>
+                            <div class="dropdown-body">
+                                <div class="dropdown-item active-filter" onclick="selectPlatform('All Platforms')"><i class="fa-solid fa-globe"></i> All Platforms</div>
+                                <div class="dropdown-item" onclick="selectPlatform('PC')"><i class="fa-solid fa-desktop"></i> PC</div>
+                                <div class="dropdown-item" onclick="selectPlatform('PlayStation')"><i class="fa-brands fa-playstation"></i> PlayStation</div>
+                                <div class="dropdown-item" onclick="selectPlatform('Xbox')"><i class="fa-brands fa-xbox"></i> Xbox</div>
+                                <div class="dropdown-item" onclick="selectPlatform('Nintendo')"><i class="fa-solid fa-gamepad"></i> Nintendo</div>
+                                <div class="dropdown-item" onclick="selectPlatform('Mobile')"><i class="fa-solid fa-mobile-screen"></i> Mobile</div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Approach Summary Cards -->
+                    <div class="approach-cards" id="approachCards">
+                        <div class="approach-card approach-cf" onclick="showEvalModal('cf')">
+                            <div class="approach-icon-hex hex-purple"><i class="fa-solid fa-users"></i></div>
+                            <div class="approach-info">
+                                <h3>COLLABORATIVE FILTERING</h3>
+                                <div class="approach-metrics">
+                                    <div><span class="approach-metric-label">AVG ACCURACY</span><span
+                                            class="approach-metric-val" id="cfAccuracy">—</span></div>
+                                    <div><span class="approach-metric-label">USER SATISFACTION</span><span
+                                            class="approach-metric-val" id="cfSatisfaction">—</span></div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="approach-card approach-content" onclick="showEvalModal('content')">
+                            <div class="approach-icon-hex hex-cyan"><i class="fa-solid fa-layer-group"></i></div>
+                            <div class="approach-info">
+                                <h3>CONTENT-BASED</h3>
+                                <div class="approach-metrics">
+                                    <div><span class="approach-metric-label">AVG ACCURACY</span><span
+                                            class="approach-metric-val" id="cbAccuracy">—</span></div>
+                                    <div><span class="approach-metric-label">USER SATISFACTION</span><span
+                                            class="approach-metric-val" id="cbSatisfaction">—</span></div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="approach-card approach-knowledge" onclick="showEvalModal('knowledge')">
+                            <div class="approach-icon-hex hex-pink"><i class="fa-solid fa-brain"></i></div>
+                            <div class="approach-info">
+                                <h3>KNOWLEDGE-BASED</h3>
+                                <div class="approach-metrics">
+                                    <div><span class="approach-metric-label">AVG ACCURACY</span><span
+                                            class="approach-metric-val" id="kbAccuracy">—</span></div>
+                                    <div><span class="approach-metric-label">USER SATISFACTION</span><span
+                                            class="approach-metric-val" id="kbSatisfaction">—</span></div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="approach-card approach-hybrid" onclick="showEvalModal('hybrid')">
+                            <div class="approach-icon-hex hex-orange"><i class="fa-solid fa-shuffle"></i></div>
+                            <div class="approach-info">
+                                <h3>HYBRID</h3>
+                                <div class="approach-metrics">
+                                    <div><span class="approach-metric-label">AVG ACCURACY</span><span
+                                            class="approach-metric-val" id="hyAccuracy">—</span></div>
+                                    <div><span class="approach-metric-label">USER SATISFACTION</span><span
+                                            class="approach-metric-val" id="hySatisfaction">—</span></div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Charts + Insights Grid -->
+                    <div class="dash-grid">
+                        <!-- Left Charts Column -->
+                        <div class="dash-charts-col">
+                            <div class="dash-chart-card">
+                                <h3><i class="fa-solid fa-bullseye"></i> 1. ACCURACY COMPARISON</h3>
+                                <canvas id="chartAccuracy"></canvas>
+                            </div>
+                            <div class="dash-chart-card">
+                                <h3><i class="fa-solid fa-chart-line"></i> 3. PERFORMANCE OVER TIME</h3>
+                                <div style="display:flex;justify-content:flex-end;margin-bottom:.5rem">
+                                    <div class="dash-filter" style="font-size:.7rem;padding:.3rem .8rem">Daily <i
+                                            class="fa-solid fa-chevron-down" style="font-size:.55rem;opacity:.5"></i>
+                                    </div>
+                                </div>
+                                <div style="position:relative"><span class="chart-y-label">ACCURACY (%)</span><canvas
+                                        id="chartTimeline"></canvas></div>
+                            </div>
+                        </div>
+                        <!-- Right Charts Column -->
+                        <div class="dash-charts-col">
+                            <div class="dash-chart-card">
+                                <h3><i class="fa-solid fa-star"></i> 2. USER SATISFACTION COMPARISON</h3>
+                                <canvas id="chartRadar" style="max-height:260px"></canvas>
+                            </div>
+                            <div class="dash-chart-card">
+                                <h3><i class="fa-solid fa-database"></i> 4. CATALOG COVERAGE</h3>
+                                <div class="coverage-layout">
+                                    <canvas id="chartCoverage" style="max-width:200px;max-height:200px"></canvas>
+                                    <div class="coverage-legend" id="coverageLegend"></div>
+                                </div>
+                                <div class="coverage-footer" id="coverageFooter"></div>
+                            </div>
+                        </div>
+                        <!-- Insights Panel -->
+                        <div class="dash-insights-col">
+                            <div class="dash-insights-card">
+                                <h4><i class="fa-solid fa-lightbulb"></i> INSIGHTS</h4>
+                                <div id="insightsList" class="insights-list"></div>
+                            </div>
+                            <div class="dash-insights-card rec-card">
+                                <h4><i class="fa-solid fa-wand-magic-sparkles"></i> RECOMMENDATION</h4>
+                                <p id="insightRec" class="insight-rec-text"></p>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Detailed Evaluation Table -->
+                    <div class="dash-chart-card" style="margin-top:1rem">
+                        <h3><i class="fa-solid fa-table"></i> DETAILED MODEL METRICS</h3>
+                        <div id="evalTableWrap"></div>
+                    </div>
+
+                    <!-- Analysis Section -->
+                    <div class="analysis-section" id="analysisSection" style="margin-top:1rem"></div>
+                </div>
+
+                <!-- ═══ INSIGHTS PAGE ═══ -->
+                <div class="page-section" id="page-insights">
+                    <h1 class="page-title">🔬 Model Insights & Dataset Statistics</h1>
+                    <p class="page-subtitle">Deep dive into the recommendation engine architecture</p>
+                    <div class="stats-grid" id="statsGrid"></div>
+                    <div class="arch-diagram">
+                        <h3>NCF Architecture (Lecture 7)</h3>
+                        <pre>
+  Input:  (user_id, item_id)
+      ↓            ↓
+  User Embedding  Item Embedding   (dim = 64)
+      └────────────┘
+           Concatenate  →  [128-dim vector]
+               ↓
+         FC(128 → 64) + ReLU + Dropout(0.2)
+               ↓
+         FC(64  → 32) + ReLU + Dropout(0.2)
+               ↓
+         FC(32  → 16) + ReLU
+               ↓
+         FC(16  →  1) + Sigmoid
+               ↓
+         Output: predicted preference ∈ (0, 1)
+                    </pre>
+                    </div>
+                </div>
+
+                <!-- ═══ ABOUT PAGE ═══ -->
+                <div class="page-section" id="page-about">
+                    <h1 class="page-title">ℹ️ About This System</h1>
+                    <div class="about-section">
+                        <h3>🎮 Intelligent E-Commerce Recommendation System</h3>
+                        <p><strong>Course:</strong> AIE425 — Intelligent Recommender Systems<br>
+                            <strong>Institution:</strong> Alamein International University<br>
+                            <strong>Instructor:</strong> Dr. Essam Abdellatef
+                        </p>
+                    </div>
+                    <div class="about-section">
+                        <h3>Implemented Methods</h3>
+                        <table class="methods-table">
+                            <tr>
+                                <th>#</th>
+                                <th>Method</th>
+                                <th>Lecture</th>
+                                <th>Key Formula</th>
+                            </tr>
+                            <tr>
+                                <td>1</td>
+                                <td>User-Based CF</td>
+                                <td>Lecture 2</td>
+                                <td>Pearson Correlation</td>
+                            </tr>
+                            <tr>
+                                <td>2</td>
+                                <td>Item-Based CF</td>
+                                <td>Lecture 4</td>
+                                <td>Adjusted Cosine</td>
+                            </tr>
+                            <tr>
+                                <td>3</td>
+                                <td>Matrix Factorization</td>
+                                <td>Lecture 6</td>
+                                <td>Gradient Descent</td>
+                            </tr>
+                            <tr>
+                                <td>4</td>
+                                <td>Neural CF (NCF)</td>
+                                <td>Lecture 7</td>
+                                <td>Embedding → FC → Sigmoid</td>
+                            </tr>
+                            <tr>
+                                <td>5</td>
+                                <td>TF-IDF VSM</td>
+                                <td>Lecture 8</td>
+                                <td>TF-IDF + Cosine Similarity</td>
+                            </tr>
+                            <tr>
+                                <td>6</td>
+                                <td>CNN Semantic</td>
+                                <td>Lecture 9</td>
+                                <td>Word Embeddings + SVD</td>
+                            </tr>
+                            <tr>
+                                <td>7</td>
+                                <td>Knowledge-Based</td>
+                                <td>Lecture 9</td>
+                                <td>Constraint Filtering</td>
+                            </tr>
+                        </table>
+                    </div>
+                    <div class="about-section">
+                        <h3>Evaluation Metrics (Lecture 5)</h3>
+                        <ul>
+                            <li><strong>MAE</strong> = mean |actual − predicted|</li>
+                            <li><strong>RMSE</strong> = √mean(actual − predicted)²</li>
+                            <li><strong>Precision, Recall, F-Score</strong> (binary threshold = 3)</li>
+                        </ul>
+                    </div>
+                </div>
+
+                <!-- ═══ PLACEHOLDER PAGES ═══ -->
+
+                <div class="page-section" id="page-store">
+                    <h1 class="page-title">🏪 Store</h1>
+                    <p class="page-subtitle">Browse and discover new games.</p>
+                </div>
+                <div class="page-section" id="page-library">
+                    <h1 class="page-title">📚 Library</h1>
+                    <p class="page-subtitle">Your game collection.</p>
+                </div>
+
+                <div class="page-section" id="page-profile">
+                    <div
+                        style="display: flex; gap: 2rem; align-items: center; background: rgba(255,255,255,0.03); padding: 2rem; border-radius: var(--radius-lg); border: 1px solid var(--border); margin-bottom: 2rem;">
+                        <img src="/static/images/ali_maaloul_looking_direct.png" alt="Avatar"
+                            style="width: 120px; height: 120px; border-radius: 50%; border: 3px solid var(--accent-purple); padding: 4px; object-fit: cover; object-position: center;">
+                        <div>
+                            <h1 id="profUser" style="font-size: 2.2rem; margin-bottom: 0.3rem; font-family: 'Orbitron', sans-serif;">
+                                SpecterX <i class="fa-solid fa-circle-check"
+                                    style="color:var(--accent-green);font-size:1.2rem"></i></h1>
+                            <p id="profStatus" style="color: var(--text-secondary); font-size: 1rem; margin-bottom: 1rem;"><i
+                                    class="fa-solid fa-trophy"></i> Elite Player | Level 42</p>
+                            <div class="xp-bar" style="width: 300px; height: 8px; max-width: 100%;">
+                                <div id="profXpFill" class="xp-fill" style="width: 73.5%"></div>
+                            </div>
+                            <p id="profXpText" style="font-size: 0.8rem; color: var(--text-muted); margin-top: 0.5rem;">7,350 / 10,000
+                                XP to next level</p>
+                        </div>
+                    </div>
+
+                    <h2 class="page-title" style="font-size: 1.4rem; margin-bottom: 1rem;">🎮 Gaming Statistics</h2>
+                    <div class="stats-grid">
+                        <div class="stat-card"
+                            style="background: rgba(124, 92, 252, 0.1); border-color: rgba(124, 92, 252, 0.3);">
+                            <div id="statOwned" class="stat-val" style="color: var(--text-primary)">0</div>
+                            <div class="stat-label">Games Owned</div>
+                        </div>
+                        <div class="stat-card">
+                            <div id="statTime" class="stat-val">0h</div>
+                            <div class="stat-label">Total Playtime</div>
+                        </div>
+                        <div class="stat-card">
+                            <div id="statAchievements" class="stat-val">0</div>
+                            <div class="stat-label">Achievements</div>
+                        </div>
+                        <div class="stat-card">
+                            <div id="statRank" class="stat-val" style="color: var(--accent-cyan)">Top 100%</div>
+                            <div class="stat-label">Global Rank</div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    </div>
+
+    <!-- ═══════════════ EVALUATION MODAL ═══════════════ -->
+    <div id="evalModal" class="modal-overlay" onclick="closeEvalModal(event)">
+        <div class="modal-content">
+            <button class="modal-close" onclick="closeEvalModal(event, true)"><i class="fa-solid fa-xmark"></i></button>
+            <h2 id="modalTitle" style="font-family:'Orbitron',sans-serif;margin-bottom:1rem;color:var(--text-primary)">Approach Evaluation</h2>
+            <p id="modalDesc" style="font-size:0.8rem;color:var(--text-muted);margin-bottom:1.5rem">Detailed performance metrics for the models in this category.</p>
+            <div id="modalTableContainer" style="overflow-x:auto;"></div>
+        </div>
+    </div>
+
+    <!-- ═══════════════ PREMIUM MODAL ═══════════════ -->
+    <div id="premiumModal" class="modal-overlay" onclick="closePremiumModal(event)">
+        <div class="modal-content" style="max-width:520px;text-align:center">
+            <button class="modal-close" onclick="closePremiumModal(event, true)"><i class="fa-solid fa-xmark"></i></button>
+            <div style="font-size:3rem;margin-bottom:1rem"><i class="fa-solid fa-gem" style="background:linear-gradient(135deg,#7c5cfc,#00d4ff);-webkit-background-clip:text;-webkit-text-fill-color:transparent"></i></div>
+            <h2 style="font-family:'Orbitron',sans-serif;margin-bottom:.5rem;color:var(--text-primary)">NEXUS PREMIUM</h2>
+            <p style="color:var(--text-muted);font-size:.85rem;margin-bottom:1.5rem">Unlock the ultimate gaming experience</p>
+            <div style="display:grid;gap:.8rem;text-align:left;margin-bottom:1.5rem">
+                <div style="display:flex;align-items:center;gap:.8rem;padding:.7rem 1rem;background:rgba(124,92,252,0.08);border-radius:10px;border:1px solid rgba(124,92,252,0.15)"><i class="fa-solid fa-bolt" style="color:var(--accent-purple)"></i><span style="font-size:.85rem;color:var(--text-secondary)">Priority AI recommendations with deeper analysis</span></div>
+                <div style="display:flex;align-items:center;gap:.8rem;padding:.7rem 1rem;background:rgba(0,212,255,0.08);border-radius:10px;border:1px solid rgba(0,212,255,0.15)"><i class="fa-solid fa-percent" style="color:var(--accent-cyan)"></i><span style="font-size:.85rem;color:var(--text-secondary)">Exclusive discounts up to 40% on all purchases</span></div>
+                <div style="display:flex;align-items:center;gap:.8rem;padding:.7rem 1rem;background:rgba(246,79,158,0.08);border-radius:10px;border:1px solid rgba(246,79,158,0.15)"><i class="fa-solid fa-clock" style="color:var(--accent-pink)"></i><span style="font-size:.85rem;color:var(--text-secondary)">Early access to new releases before anyone else</span></div>
+                <div style="display:flex;align-items:center;gap:.8rem;padding:.7rem 1rem;background:rgba(255,107,53,0.08);border-radius:10px;border:1px solid rgba(255,107,53,0.15)"><i class="fa-solid fa-ad" style="color:var(--accent-orange)"></i><span style="font-size:.85rem;color:var(--text-secondary)">Ad-free experience across the entire platform</span></div>
+            </div>
+            <div style="display:flex;gap:.8rem;justify-content:center;margin-bottom:1rem">
+                <div style="flex:1;padding:1rem;background:rgba(124,92,252,0.1);border:2px solid var(--accent-purple);border-radius:12px;cursor:pointer" onclick="subscribePremium('monthly')">
+                    <div style="font-size:.7rem;color:var(--text-muted);text-transform:uppercase">Monthly</div>
+                    <div style="font-size:1.4rem;font-weight:700;color:var(--text-primary)">$9.99<span style="font-size:.7rem;color:var(--text-muted)">/mo</span></div>
+                </div>
+                <div style="flex:1;padding:1rem;background:linear-gradient(135deg,rgba(124,92,252,0.2),rgba(0,212,255,0.2));border:2px solid var(--accent-cyan);border-radius:12px;cursor:pointer;position:relative" onclick="subscribePremium('yearly')">
+                    <div style="position:absolute;top:-8px;right:8px;background:var(--accent-green);color:#000;font-size:.6rem;padding:2px 8px;border-radius:10px;font-weight:700">SAVE 40%</div>
+                    <div style="font-size:.7rem;color:var(--text-muted);text-transform:uppercase">Yearly</div>
+                    <div style="font-size:1.4rem;font-weight:700;color:var(--text-primary)">$71.88<span style="font-size:.7rem;color:var(--text-muted)">/yr</span></div>
+                </div>
+            </div>
+            <p style="font-size:.7rem;color:var(--text-muted)">Cancel anytime. No commitments.</p>
+        </div>
+    </div>
+
+    <div id="toastContainer" class="toast-container"></div>
+    <script src="/static/js/app.js?v=30" defer></script>
+</body>
+
+</html>

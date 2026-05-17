@@ -1,0 +1,2 @@
+Success loading ubcf.pkl
+<collaborative_filtering.UserBasedCF object at 0x000002414B563400>

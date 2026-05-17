@@ -1,0 +1,19 @@
+__pycache__/
+*.pyc
+.env
+venv/
+env/
+.venv/
+
+# Ignore large model files and datasets
+models/saved/*.pkl
+models/saved/*.pt
+data/processed/*.parquet
+data/processed/*.json
+data/processed/*.pkl
+data/raw/
+
+# Ignore IDE files
+.vscode/
+.idea/
+.DS_Store
