@@ -1,15 +1,5 @@
----
-title: Nexus Games Recommender
-emoji: 🎮
-colorFrom: indigo
-colorTo: purple
-sdk: docker
-pinned: false
----
-
 <div align="center">
-  <img src="static/images/logo.png" alt="NEXUS Games Logo" width="120"/>
-  <h1>NEXUS Games | Advanced AI Recommender System</h1>
+  <h1>🎮 NEXUS Games | Advanced AI Recommender System</h1>
   <p><strong>A State-of-the-Art Machine Learning Recommendation Engine with Interactive Glassmorphism UI</strong></p>
   
   [![Python](https://img.shields.io/badge/Python-3.9+-blue.svg)](https://www.python.org/)
